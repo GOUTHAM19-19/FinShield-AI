@@ -1,0 +1,5 @@
+This ZIP includes frontend/index.html with the visible build marker:
+FINSHIELD AI — EXPLAINABLE AI + JSON REPORT BUILD (2026-10-25)
+It includes the Explainable AI panel and Download Analysis Report (JSON) button.
+Start the frontend with START_FRONTEND.bat from this extracted FinShieldAI folder.
+Open http://127.0.0.1:5500/index.html and confirm the turquoise build marker is visible.

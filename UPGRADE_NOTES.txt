@@ -1,0 +1,19 @@
+FINSHIELD AI ADVANCED UPGRADE
+
+Added:
+- Advanced Investigation Toolkit dashboard panel
+- Risk Review Checklist with status and analyst notes (browser-local session)
+- Transaction intake with CSV import, account-behavior baselines, interpretable risk reasons, and linked transfer sequence cases
+- Persistent transaction and investigation-case storage in SQLite, including case status and analyst notes
+- Transaction Scenario Lab with illustrative explanations
+- Session Audit Log and JSON export
+- Rule Transparency notes
+- Frontend launcher that serves the correct frontend folder
+
+Existing explainability/report features are retained in frontend/index.html.
+Important: the Advanced Toolkit checklist and account audit log remain browser-local; risk investigation case reviews are stored in the backend SQLite database. Scores and scenario outputs are illustrative and are not validated financial decisions.
+
+INDIVIDUAL TRANSACTION ANALYSIS UPDATE
+- Replaced the Random Forest prediction endpoint with a transparent additive risk scorer whose exact signal contributions are returned to the UI.
+- Added optional usual-amount and usual-frequency baselines so amount and transaction-rate signals can adapt to individual behavior, alongside cross-signal interactions, explicit concern bands, and input-context completeness disclosure.
+- The bundled Random Forest training script and artifact remain as an experiment; the running API does not load them.
