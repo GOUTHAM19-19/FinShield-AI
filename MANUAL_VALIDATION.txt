@@ -1,0 +1,44 @@
+FINSHIELD AI - QUICK VALIDATION CHECKLIST
+=========================================
+
+Run backend and frontend, then check:
+
+1. API docs open: http://127.0.0.1:8001/docs
+2. GET /simulate?scenario=normal returns chain_count 0.
+3. GET /simulate?scenario=suspicious returns a chain.
+4. GET /transaction-graph?scenario=suspicious returns nodes and edges.
+5. POST /monitoring/reset clears live demo data.
+6. POST /monitoring/transactions can add a transfer.
+7. Inject 3-transfer demo creates a case in the live dashboard.
+8. Case displays priority level, score, and factors.
+9. POST /monitoring/transactions with same sender/receiver should return 400.
+10. GET /simulate?scenario=unknown should return 400.
+11. POST /monitoring/import accepts a batch of transactions and returns assessments, account/sequence context, and saved cases.
+12. Importing a transaction ID already in the database returns an explicit error.
+13. A sender with at least five prior transactions gets an amount comparison against its observed median.
+14. A transaction to a new recipient and a different supplied location explains both changes in its risk factors.
+15. Missing location/channel are disclosed and do not independently raise the risk score.
+16. Three transfers connected within five minutes produce a linked investigation case.
+17. PATCH /monitoring/cases/{case_id} saves status and analyst notes; GET /monitoring returns them after a server restart.
+18. POST /monitoring/reset clears persisted monitoring transactions and investigation cases.
+19. CSV upload accepts sender, receiver, amount and optional transaction_id, timestamp, location, channel columns.
+20. "Inject 3-transfer demo" appends a linked sample without clearing imported history.
+21. Transaction History shows the 500 most recent imported/manual transactions newest-first and can search by ID, account, or location.
+22. Risk-level filters narrow the history; opening a row shows assessment reasons, score, confidence, context, and any linked sequence.
+23. POST /predict with optional usual_transaction_amount and usual_transactions_per_hour returns the additive risk score, all signal contributions, and context completeness.
+24. The sum of individual signal points is capped at 100 and exactly explains the returned risk_score.
+25. Leave usual transaction amount blank and confirm the response discloses the missing baseline and lowers context completeness.
+26. Exercise amount/frequency and new-recipient/unusual-hour combinations; returned interaction signals should match the exact score contribution.
+27. Enter a usual hourly transaction baseline matching current activity; the frequency signal should be 0, while the same activity without a baseline uses broad thresholds.
+28. Submit a zero usual hourly baseline and confirm the API rejects it with HTTP 422.
+29. Enter a usual transaction amount matching a large transaction; the personalized amount signal should be 0 instead of the broad absolute-amount points.
+
+Example PowerShell request for live transaction:
+Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8001/monitoring/transactions `
+  -ContentType "application/json" `
+  -Body '{"sender":"ACC100","receiver":"ACC101","amount":10000,"minutes_after_previous":2}'
+
+RISK SCORE NOTE:
+Risk scores and confidence values are interpretable heuristics and data-quality context,
+not probabilities. Detection performance and false-alert rates have not been validated.
+Use synthetic or properly authorized transaction data only.

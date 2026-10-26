@@ -1,0 +1,2737 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinShield AI | Financial Security Analysis</title>
+
+    <style>
+        :root {
+            --bg: #080f1e;
+            --panel: #111b2e;
+            --panel-light: #17243a;
+            --border: #2b3b54;
+            --text: #e5edf8;
+            --muted: #9aabc2;
+            --blue: #2496ff;
+            --green: #22c55e;
+            --yellow: #fbbf24;
+            --red: #f87171;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .login-shell {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            background:
+                radial-gradient(ellipse at top, #142746 0%, transparent 55%),
+                var(--bg);
+        }
+
+        .login-card {
+            width: min(100%, 430px);
+            padding: 34px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: 0 24px 70px #0006;
+            animation: card-enter 550ms cubic-bezier(.2,.75,.25,1) both;
+        }
+
+        .login-brand {
+            margin-bottom: 8px;
+            color: #70b8ff;
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .login-card h1 {
+            margin: 16px 0 6px;
+            font-size: 25px;
+        }
+
+        .login-description, .login-notice {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .login-description { margin-bottom: 22px; }
+        .login-notice { margin-top: 14px; }
+        .login-error { min-height: 22px; margin-top: 10px; }
+        .header-actions { display: flex; align-items: center; gap: 16px; }
+        .btn-logout { padding: 9px 13px; background: #34445d; font-size: 13px; }
+
+        .auth-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .btn-link {
+            background: transparent;
+            border: 0;
+            color: #70b8ff;
+            font-weight: 700;
+            font-size: 13px;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .auth-form[hidden], .login-shell[hidden], #dashboardApp[hidden] {
+            display: none !important;
+        }
+
+        header {
+            background: #101a2c;
+            border-bottom: 1px solid var(--border);
+            padding: 20px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .brand {
+            font-size: 25px;
+            font-weight: 800;
+            color: #70b8ff;
+        }
+
+        .status {
+            color: #86efac;
+            font-size: 13px;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        #dashboardApp.dashboard-enter > header,
+        #dashboardApp.dashboard-enter main > *,
+        #dashboardApp.dashboard-enter footer {
+            animation: content-enter 500ms cubic-bezier(.2,.75,.25,1) both;
+        }
+
+        #dashboardApp.dashboard-enter main > :nth-child(2) { animation-delay: 60ms; }
+        #dashboardApp.dashboard-enter main > :nth-child(3) { animation-delay: 110ms; }
+        #dashboardApp.dashboard-enter main > :nth-child(4) { animation-delay: 160ms; }
+        #dashboardApp.dashboard-enter main > :nth-child(5) { animation-delay: 210ms; }
+
+        @keyframes card-enter {
+            from { opacity: 0; transform: translateY(16px) scale(.985); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes content-enter {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .intro {
+            margin-bottom: 28px;
+        }
+
+        .intro h1 {
+            font-size: clamp(25px, 4vw, 35px);
+            margin-bottom: 8px;
+        }
+
+        .intro p {
+            color: var(--muted);
+            max-width: 780px;
+        }
+
+        .section-title {
+            font-size: 23px;
+            margin: 30px 0 16px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .card {
+            min-width: 0;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 24px;
+            box-shadow: 0 10px 28px #02081730;
+            transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+        }
+
+        .card:hover {
+            border-color: #3c5678;
+            box-shadow: 0 14px 34px #02081755;
+            transform: translateY(-2px);
+        }
+
+        .card h2 {
+            font-size: 19px;
+            margin-bottom: 20px;
+        }
+
+        .field {
+            margin-bottom: 17px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            color: #cbd5e1;
+            margin-bottom: 7px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #3a4b65;
+            border-radius: 8px;
+            background: #091426;
+            color: white;
+            font-size: 15px;
+        }
+
+        input:focus, select:focus, button:focus-visible {
+            outline: 2px solid #70b8ff;
+            outline-offset: 2px;
+        }
+
+        button {
+            border: none;
+            border-radius: 9px;
+            padding: 13px 16px;
+            color: white;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: filter 0.2s, transform 0.2s;
+        }
+
+        button:hover {
+            filter: brightness(1.12);
+        }
+
+        button:active {
+            transform: scale(0.99);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .btn-primary {
+            background: #1677e8;
+            width: 100%;
+        }
+
+        .btn-normal {
+            background: #16834a;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .btn-suspicious {
+            background: #c73645;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .score-area {
+            text-align: center;
+            padding: 16px 0 22px;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .score {
+            font-size: 58px;
+            font-weight: 800;
+            margin: 12px 0;
+            line-height: 1.2;
+        }
+
+        .score span {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .risk {
+            display: inline-block;
+            padding: 6px 17px;
+            border-radius: 20px;
+            background: #26364e;
+            font-weight: 700;
+        }
+
+        .low { color: #86efac; }
+        .medium { color: #fcd34d; }
+        .high { color: #fca5a5; }
+        .informational { color: #bfdbfe; }
+
+        .bar {
+            height: 10px;
+            background: #29364c;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 18px 0;
+        }
+
+        .bar-fill {
+            height: 100%;
+            width: 0;
+            background: var(--blue);
+            transition: width 0.4s;
+        }
+
+        .reasons {
+            margin-top: 18px;
+        }
+
+        .reasons h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .reasons ul {
+            list-style: none;
+        }
+
+        .reasons li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            color: #cbd5e1;
+            overflow-wrap: anywhere;
+        }
+
+        .note {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+            margin-top: 17px;
+        }
+
+        .message {
+            margin-top: 14px;
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .error { color: #fca5a5; }
+        .success { color: #86efac; }
+
+        .simulation-card {
+            margin-top: 25px;
+        }
+
+        .simulation-description {
+            color: var(--muted);
+            margin-bottom: 18px;
+        }
+
+        .simulation-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .summary-item {
+            background: #0a1527;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .summary-item .label {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .summary-item .value {
+            font-size: 25px;
+            font-weight: 800;
+            margin-top: 5px;
+            overflow-wrap: anywhere;
+        }
+
+        .case-card {
+            background: #0a1527;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--red);
+            border-radius: 10px;
+            padding: 18px;
+            margin-top: 15px;
+        }
+
+        .case-card h3 {
+            margin-bottom: 10px;
+        }
+
+        .case-card p {
+            margin-top: 8px;
+            overflow-wrap: anywhere;
+        }
+
+        .score-pill {
+            display: inline-block;
+            background: #52232d;
+            color: #fecaca;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .account-flow {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .account {
+            background: #172c48;
+            border: 1px solid #35577d;
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .flow-arrow {
+            color: #70b8ff;
+            font-weight: bold;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #0a1527;
+            scrollbar-color: #3a5270 #0a1527;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 13px;
+            min-width: 700px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 13px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            background: #17243a;
+            color: #a9c8eb;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        td {
+            color: #dbe5f3;
+        }
+
+        th:first-child { border-top-left-radius: 11px; }
+        th:last-child { border-top-right-radius: 11px; }
+        tbody tr { animation: row-enter 350ms ease both; }
+        tbody tr:nth-child(even) { background: #ffffff05; }
+        tbody tr:hover { background: #2496ff12; }
+        tbody tr:last-child td { border-bottom: 0; }
+        td:first-child { color: #9bcaff; font-weight: 700; }
+        td:last-child { color: #c5f1d5; font-variant-numeric: tabular-nums; font-weight: 700; }
+
+        @keyframes row-enter {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .empty-state {
+            border: 1px dashed #3b4c65;
+            border-radius: 10px;
+            padding: 20px;
+            color: var(--muted);
+            margin-top: 18px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 28px 15px;
+            color: #74849a;
+            font-size: 12px;
+            margin-top: 30px;
+            border-top: 1px solid #1b2a40;
+        }
+
+
+        .graph-card {
+            margin-top: 22px;
+            background: #0a1527;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+            overflow: hidden;
+        }
+        .graph-header { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px; }
+        .graph-legend { display:flex; flex-wrap:wrap; gap:14px; color:var(--muted); font-size:12px; }
+        .legend-dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:5px; }
+        .graph-scroll { overflow-x:auto; border:1px solid #263750; border-radius:10px; background:#081222; }
+        .transaction-graph { display:block; width:100%; min-width:650px; height:auto; }
+        .graph-node { fill:#17395b; stroke:#70b8ff; stroke-width:2; }
+        .graph-node.chain-node { fill:#51232d; stroke:#fb7185; }
+        .graph-node-label { fill:#e5edf8; font-size:12px; text-anchor:middle; dominant-baseline:middle; font-weight:700; }
+        .graph-edge { stroke:#66809e; stroke-width:1.6; opacity:.8; fill:none; }
+        .graph-edge.flagged { stroke:#fb7185; stroke-width:3; opacity:1; }
+        .graph-edge-label { fill:#cbd5e1; font-size:10px; text-anchor:middle; }
+        .graph-note { color:var(--muted); font-size:12px; margin-top:12px; }
+
+
+
+.live-monitor-grid { display:grid; grid-template-columns:minmax(260px, 0.85fr) minmax(0, 1.4fr); gap:18px; margin-top:18px; }
+.live-form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.live-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+.btn-secondary { background:#34445d; }
+.btn-demo { background:#8b5cf6; }
+.live-status { margin-top:12px; min-height:24px; font-size:14px; }
+.live-graph-holder { margin-top:16px; }
+.live-case-list { display:grid; gap:10px; margin-top:14px; }
+.live-case { background:#0a1527; border:1px solid var(--border); border-left:4px solid var(--yellow); border-radius:10px; padding:13px; }
+.live-case strong { color:#fcd34d; }
+.transaction-history-card { margin-top:20px; }
+.transaction-history-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+.transaction-history-controls { display:grid; grid-template-columns:minmax(220px,1fr) 190px; gap:12px; margin:16px 0; }
+.transaction-history-controls input, .transaction-history-controls select { margin:0; }
+.transaction-history-table { min-width:900px; }
+.transaction-analysis-row td { padding:0; white-space:normal; }
+.transaction-analysis-details { padding:16px 18px; background:#0b192a; border-left:3px solid var(--blue); }
+.transaction-analysis-details ul { margin:8px 0 8px 20px; color:#cbd5e1; }
+.transaction-analysis-meta { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.transaction-analysis-meta span { padding:4px 9px; border:1px solid var(--border); border-radius:999px; color:var(--muted); font-size:12px; }
+.transaction-history-table td { white-space:nowrap; }
+.history-risk { display:inline-block; padding:4px 9px; border-radius:999px; background:#26364e; font-size:12px; font-weight:700; }
+.history-risk.high { color:#fca5a5; background:#4b202b; }
+.history-risk.medium { color:#fcd34d; background:#493b1d; }
+.history-risk.low { color:#86efac; background:#123b2a; }
+.history-risk.informational { color:#b9c6d8; background:#26364e; }
+.transaction-graph .graph-edge { stroke-dasharray: 900; stroke-dashoffset: 900; animation: edge-draw 900ms ease forwards; }
+.transaction-graph .graph-node { transform-box: fill-box; transform-origin: center; animation: node-pop 420ms cubic-bezier(.2,.8,.2,1) both; }
+
+@keyframes edge-draw { to { stroke-dashoffset: 0; } }
+@keyframes node-pop { from { opacity: 0; transform: scale(.65); } to { opacity: 1; transform: scale(1); } }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+    }
+}
+@media (max-width: 780px) { .live-monitor-grid { grid-template-columns:1fr; } .live-form-row { grid-template-columns:1fr; } }
+
+
+        .priority-panel { margin-top: 24px; }
+        .priority-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin-top:16px; }
+        .priority-item { background:#0a1527; border:1px solid var(--border); border-left:5px solid var(--yellow); border-radius:10px; padding:16px; }
+        .priority-badge { display:inline-block; margin:8px 0; padding:5px 10px; border-radius:20px; font-size:13px; font-weight:700; }
+        .priority-high { background:#52232d; color:#fecaca; }
+        .priority-medium { background:#4b3a16; color:#fde68a; }
+        .priority-low { background:#123b2a; color:#bbf7d0; }
+        .priority-score { font-size:28px; font-weight:800; margin-top:8px; }
+
+
+        .explain-panel { margin-top:18px; padding:16px; border:1px solid #35506f; border-radius:12px; background:#0a1527; }
+        .explain-panel h3 { margin-bottom:8px; }
+        .explain-row { display:grid; grid-template-columns:minmax(120px,1fr) 2fr 38px; align-items:center; gap:10px; margin:12px 0; font-size:13px; }
+        .explain-track { height:9px; background:#29364c; border-radius:9px; overflow:hidden; }
+        .explain-fill { height:100%; background:#60a5fa; border-radius:9px; }
+        .explain-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
+        .explain-actions button { background:#34445d; }
+        .case-status { margin-top:12px; display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+        .case-status select { max-width:220px; }
+        .small-note { font-size:12px; color:var(--muted); margin-top:10px; }
+
+        @media (max-width: 780px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                padding: 18px 20px;
+            }
+
+            main {
+                margin-top: 25px;
+            }
+
+            .card {
+                padding: 19px;
+            }
+
+            .score {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<section class="login-shell" id="loginView" aria-labelledby="authTitle">
+    <div class="login-card">
+        <div class="login-brand">🛡 FinShield AI</div>
+        <div class="auth-header">
+            <h1 id="authTitle">Welcome back</h1>
+            <button type="button" class="btn-link" id="toggleAuthMode">Create account</button>
+        </div>
+        <p class="login-description">Secure your account and access your personal dashboard.</p>
+
+        <form id="loginForm" class="auth-form">
+            <div class="field">
+                <label for="loginEmail">Email address</label>
+                <input id="loginEmail" type="email" autocomplete="username" required>
+            </div>
+            <div class="field">
+                <label for="loginPassword">Password</label>
+                <input id="loginPassword" type="password" autocomplete="current-password" required>
+            </div>
+            <button class="btn-primary" type="submit">Sign in</button>
+            <p class="login-error error" id="loginError" role="alert"></p>
+        </form>
+
+        <form id="registerForm" class="auth-form" hidden>
+            <div class="field">
+                <label for="registerName">Full name</label>
+                <input id="registerName" type="text" autocomplete="name" required>
+            </div>
+            <div class="field">
+                <label for="registerEmail">Email address</label>
+                <input id="registerEmail" type="email" autocomplete="username" required>
+            </div>
+            <div class="field">
+                <label for="registerPassword">Password</label>
+                <input id="registerPassword" type="password" autocomplete="new-password" required>
+            </div>
+            <div class="field">
+                <label for="registerPhone">Mobile number</label>
+                <input id="registerPhone" type="tel" autocomplete="tel" required>
+            </div>
+            <div class="field">
+                <label for="registerAccountType">Account type</label>
+                <select id="registerAccountType">
+                    <option value="Personal">Personal</option>
+                    <option value="Business">Business</option>
+                    <option value="Premium">Premium</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="registerCountry">Country</label>
+                <input id="registerCountry" type="text" autocomplete="country-name" required>
+            </div>
+            <div class="field">
+                <label for="registerAddress">Home address</label>
+                <input id="registerAddress" type="text" autocomplete="street-address" required>
+            </div>
+            <button class="btn-primary" type="submit">Create account</button>
+            <p class="login-error error" id="registerError" role="alert"></p>
+        </form>
+
+        <p class="login-notice">Demo account data is saved locally in this browser for quick access and testing. It is not production-grade authentication.</p>
+    </div>
+</section>
+<div id="dashboardApp" hidden>
+<header>
+    <div class="brand">🛡 FinShield AI</div>
+    <div class="header-actions">
+        <div class="status">● Financial Security Analysis Prototype</div>
+        <button class="btn-logout" id="logoutButton" type="button">Sign out</button>
+    </div>
+</header>
+<main>
+    <section class="intro">
+        <h1>Financial Transaction Risk Analysis</h1>
+        <p>
+            Analyse individual transactions and connected transfer patterns.
+            Review risk indicators and identify activities that may require
+            further investigation.
+        </p>
+    </section>
+
+    <!-- INDIVIDUAL TRANSACTION ANALYSIS -->
+    <h2 class="section-title">1. Individual Transaction Analysis</h2>
+
+    <section class="dashboard">
+        <div class="card">
+            <h2>Transaction Details</h2>
+
+            <form id="transactionForm">
+                <div class="field">
+                    <label for="amount">Transaction Amount (₹)</label>
+                    <input id="amount" type="number" min="0.01"
+                        max="100000000" step="0.01" value="95000" required>
+                </div>
+
+                <div class="field">
+                    <label for="usualAmount">Usual transaction amount (₹, optional)</label>
+                    <input id="usualAmount" type="number" min="0.01"
+                        max="100000000" step="0.01" placeholder="Enter the account's typical amount">
+                    <p class="small-note">Adds personalized amount comparison. Leave blank if this history is unknown.</p>
+                </div>
+
+                <div class="field">
+                    <label for="frequency">Transactions in the Last Hour</label>
+                    <input id="frequency" type="number" min="0"
+                        max="10000" step="1" value="6" required>
+                </div>
+
+                <div class="field">
+                    <label for="usualFrequency">Usual transactions per hour (optional)</label>
+                    <input id="usualFrequency" type="number" min="0.01"
+                        max="10000" step="0.01" placeholder="Enter the account's typical hourly rate">
+                    <p class="small-note">Personalizes the activity-rate comparison. Leave blank if unknown.</p>
+                </div>
+
+                <div class="field">
+                    <label for="newPayee">Is the Recipient New?</label>
+                    <select id="newPayee">
+                        <option value="true" selected>Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="unusualHour">Was the Transaction at an Unusual Hour?</label>
+                    <select id="unusualHour">
+                        <option value="true" selected>Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="accountAge">Account Age (Days)</label>
+                    <input id="accountAge" type="number" min="0"
+                        max="100000" step="1" value="2" required>
+                </div>
+
+                <button class="btn-primary" id="checkButton" type="submit">
+                    Check Transaction
+                </button>
+
+                <p id="errorMessage" class="message error" role="alert"></p>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Risk Analysis</h2>
+
+            <div class="score-area" aria-live="polite">
+                <p class="muted">Explainable Transaction Risk Score</p>
+                <div class="score" id="riskScore">--<span>/100</span></div>
+                <span class="risk" id="riskLevel">Awaiting analysis</span>
+
+                <div class="bar">
+                    <div class="bar-fill" id="scoreBar"></div>
+                </div>
+
+                <p id="probability" class="muted">
+                    Submit a transaction to see its rule-based risk score.
+                </p>
+            </div>
+
+            <div class="explain-panel" id="explainabilityPanel" aria-live="polite" style="display:block !important; visibility:visible !important; opacity:1 !important" style="display:block">
+                <h3 style="font-size:22px;color:#67e8f9">Explainable analysis: Why this result?</h3>
+                <p class="muted" id="explainSummary">Run a transaction analysis to see each signal's contribution.</p>
+                <div id="explainFactors"><p class="small-note">The explanation will appear after analysis.</p></div>
+                <div class="explain-actions">
+                    <button type="button" id="downloadTransactionReport" style="display:inline-block !important;visibility:visible !important">Download Analysis Report (JSON)</button>
+                </div>
+                <p class="small-note">Signal points add to the rule-based score; they are not model probabilities, SHAP values, or proof of fraud.</p>
+            </div>
+
+            <div class="reasons">
+                <h3>Flagged Indicators</h3>
+                <ul id="reasonsList">
+                    <li>No transaction analysed yet.</li>
+                </ul>
+            </div>
+
+
+
+            <p class="note" id="transactionDisclaimer">
+                Demonstration only. The rule-based score is not calibrated or validated for real financial decisions.
+            </p>
+        </div>
+    </section>
+
+    <!-- TRANSACTION SIMULATION -->
+    <h2 class="section-title">2. Transaction Scenario Simulation</h2>
+
+    <section class="card simulation-card">
+        <h2>Investigate Connected Transactions</h2>
+
+        <p class="simulation-description">
+            Generate sample transaction activity. The normal scenario spreads
+            transfers over time. The suspicious scenario demonstrates rapid
+            transfers across connected accounts.
+        </p>
+
+        <div class="simulation-buttons">
+            <button type="button" id="normalButton" class="btn-normal">
+                ▶ Run Normal Scenario
+            </button>
+
+            <button type="button" id="suspiciousButton" class="btn-suspicious">
+                ⚠ Run Suspicious Scenario
+            </button>
+        </div>
+
+        <p id="simulationMessage" class="message" role="status"
+            aria-live="polite"></p>
+
+        <div id="simulationResults">
+            <div class="empty-state">
+                No simulation has been run yet. Select a scenario above
+                to generate and analyse sample transactions.
+            </div>
+        </div>
+    </section>
+
+<!-- LIVE MONITORING UPGRADE -->
+<h2 class="section-title">3. Live Transaction Monitoring Lab</h2>
+<section class="card simulation-card" id="liveMonitoringSection">
+    <h2>Monitor activity and investigate explainable alerts</h2>
+    <p class="simulation-description">
+        Import a transaction CSV or enter activity manually. Risk indicators compare events with each sender's observed history,
+        flag linked rapid transfers, and preserve investigation cases across backend restarts.
+    </p>
+    <div class="live-monitor-grid">
+        <div class="card">
+            <h2>Transaction intake</h2>
+            <div class="field">
+                <label for="transactionCsv">Import transaction CSV</label>
+                <input id="transactionCsv" type="file" accept=".csv,text/csv">
+                <p class="small-note">Required headers: sender, receiver, amount. Optional: transaction_id, timestamp, location, channel.</p>
+                <button class="btn-secondary" type="button" id="importTransactionsButton">Import CSV</button>
+            </div>
+            <div class="live-actions">
+                <button class="btn-demo" type="button" id="seedHistoryButton">Build sample account history</button>
+                <button class="btn-secondary" type="button" id="resetMonitorButton">Clear analysis data</button>
+            </div>
+            <p id="importStatus" class="live-status muted" role="status" aria-live="polite"></p>
+            <h2 style="margin-top:24px">Enter one transaction</h2>
+            <form id="liveTransactionForm">
+                <div class="field">
+                    <label for="liveSender">Sender account</label>
+                    <input id="liveSender" value="ACC100" maxlength="32" pattern="[A-Za-z0-9_\-]+" required>
+                </div>
+                <div class="field">
+                    <label for="liveReceiver">Receiver account</label>
+                    <input id="liveReceiver" value="ACC101" maxlength="32" pattern="[A-Za-z0-9_\-]+" required>
+                </div>
+                <div class="live-form-row">
+                    <div class="field">
+                        <label for="liveAmount">Amount (₹)</label>
+                        <input id="liveAmount" type="number" min="0.01" max="100000000" step="0.01" value="50000" required>
+                    </div>
+                    <div class="field">
+                        <label for="liveGap">Minutes after previous</label>
+                        <input id="liveGap" type="number" min="0" max="1440" step="1" value="2" required>
+                    </div>
+                </div>
+                <div class="live-form-row">
+                    <div class="field">
+                        <label for="liveLocation">Location (optional)</label>
+                        <input id="liveLocation" value="Chennai" maxlength="100" placeholder="e.g. Bengaluru">
+                    </div>
+                    <div class="field">
+                        <label for="liveChannel">Channel (optional)</label>
+                        <select id="liveChannel">
+                            <option value="">Not provided</option>
+                            <option value="mobile">Mobile</option>
+                            <option value="web">Web</option>
+                            <option value="branch">Branch</option>
+                            <option value="atm">ATM</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn-primary" id="addLiveTransactionButton" type="submit">＋ Analyse Transaction</button>
+            </form>
+            <div class="live-actions">
+                <button class="btn-demo" type="button" id="demoChainButton">⚡ Inject 3-transfer demo</button>
+            </div>
+            <p id="liveMonitorStatus" class="live-status muted" role="status" aria-live="polite">Load sample history to compare a typical account with an unusual transaction.</p>
+        </div>
+        <div class="card">
+            <h2>Activity and relationship view</h2>
+            <div class="summary-grid">
+                <div class="summary-item"><div class="label">Transactions</div><div class="value" id="liveTxCount">0</div></div>
+                <div class="summary-item"><div class="label">Accounts</div><div class="value" id="liveAccountCount">0</div></div>
+                <div class="summary-item"><div class="label">Chains found</div><div class="value" id="liveChainCount">0</div></div>
+            </div>
+            <div id="liveGraph" class="live-graph-holder">
+                <div class="empty-state">Add transactions to create a live network graph.</div>
+            </div>
+            <div id="liveCases" class="live-case-list"></div>
+        </div>
+    </div>
+    <section class="card transaction-history-card" aria-labelledby="transactionHistoryTitle">
+        <div class="transaction-history-header">
+            <div>
+                <h2 id="transactionHistoryTitle">Transaction history</h2>
+                <p class="simulation-description">Search imported and manually entered transactions. Open any row to inspect its risk analysis and supporting context.</p>
+            </div>
+            <span class="risk" id="transactionHistoryCount" aria-live="polite">0 transactions</span>
+        </div>
+        <div class="transaction-history-controls">
+            <input id="transactionHistorySearch" type="search" placeholder="Search transaction, sender, receiver, or location" aria-label="Search transaction history">
+            <select id="transactionHistoryRisk" aria-label="Filter transaction history by risk">
+                <option value="all">All risk levels</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+                <option value="informational">Informational</option>
+            </select>
+        </div>
+        <div class="table-wrap">
+            <table class="transaction-history-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Transaction</th>
+                        <th>Accounts</th>
+                        <th>Amount</th>
+                        <th>Risk</th>
+                        <th>Confidence</th>
+                        <th>Analysis</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionHistoryRows">
+                    <tr><td colspan="7">Import transactions or add activity to build transaction history.</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="small-note">History is sorted newest first. Risk scores and context confidence are heuristic indicators, not validated fraud probabilities.</p>
+    </section>
+    <p class="note">Transactions and case notes are stored locally in SQLite on the backend. Scores are explainable heuristics, not calibrated fraud probabilities. Missing information lowers context confidence and is not itself treated as suspicious. This prototype uses no bank connection and should only be tested with synthetic or authorized data.</p>
+</section>
+
+
+<!-- CASE PRIORITIZATION -->
+<section class="card priority-panel" id="casePrioritizationSection">
+    <h2>4. Case Prioritization</h2>
+    <p class="simulation-description">Review flagged transactions and linked sequences, understand the signals, and save case status and analyst notes.</p>
+    <div class="summary-grid">
+        <div class="summary-item"><div class="label">Cases to review</div><div class="value" id="priorityCaseCount">0</div></div>
+        <div class="summary-item"><div class="label">High priority</div><div class="value" id="priorityHighCount">0</div></div>
+        <div class="summary-item"><div class="label">Top priority score</div><div class="value" id="priorityTopScore">--</div></div>
+    </div>
+    <div id="priorityCases" class="priority-grid">
+        <div class="empty-state">No investigation cases yet. Use “Inject 3-transfer demo” in Live Transaction Monitoring to generate a sample case.</div>
+    </div>
+    <p class="note">Priority is a transparent rule score used to order investigation leads, not a probability or automated financial decision.</p>
+</section>
+
+</main>
+
+<footer>
+    FinShield AI · Academic Hackathon Prototype ·
+    Flagged activity requires investigation and does not confirm fraud.
+</footer>
+
+<script>
+    // API addresses
+    const API_BASE = "http://127.0.0.1:8001";
+    const PREDICT_URL = `${API_BASE}/predict`;
+    const SIMULATION_URL = `${API_BASE}/simulate`;
+    const GRAPH_URL = `${API_BASE}/transaction-graph`;
+
+    // Individual transaction analysis elements
+    const form = document.getElementById("transactionForm");
+    const checkButton = document.getElementById("checkButton");
+    const errorMessage = document.getElementById("errorMessage");
+
+    // Last analysis is kept in this browser session so a report can be exported.
+    let lastTransactionAnalysis = null;
+
+    // Individual transaction analysis
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        errorMessage.textContent = "";
+        errorMessage.className = "message error";
+        checkButton.disabled = true;
+        checkButton.textContent = "Analysing...";
+
+        const transaction = {
+            amount: Number(document.getElementById("amount").value),
+            transactions_last_hour: Number(document.getElementById("frequency").value),
+            is_new_payee:
+                document.getElementById("newPayee").value === "true",
+            unusual_hour:
+                document.getElementById("unusualHour").value === "true",
+            account_age_days:
+                Number(document.getElementById("accountAge").value),
+            usual_transaction_amount:
+                document.getElementById("usualAmount").value === ""
+                    ? null
+                    : Number(document.getElementById("usualAmount").value),
+            usual_transactions_per_hour:
+                document.getElementById("usualFrequency").value === ""
+                    ? null
+                    : Number(document.getElementById("usualFrequency").value)
+        };
+
+        try {
+            const response = await fetch(PREDICT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(transaction)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    typeof result.detail === "string"
+                        ? result.detail
+                        : JSON.stringify(result.detail || result)
+                );
+            }
+
+            displayTransactionResult(result);
+
+        } catch (error) {
+            errorMessage.textContent =
+                "Prediction failed: " + error.message +
+                ". Check that the backend is running and CORS is configured.";
+        } finally {
+            checkButton.disabled = false;
+            checkButton.textContent = "Check Transaction";
+        }
+    });
+
+    function displayTransactionResult(result) {
+        const inputSnapshot = {
+            amount: Number(document.getElementById("amount").value),
+            transactions_last_hour: Number(document.getElementById("frequency").value),
+            is_new_payee: document.getElementById("newPayee").value === "true",
+            unusual_hour: document.getElementById("unusualHour").value === "true",
+            account_age_days: Number(document.getElementById("accountAge").value),
+            usual_transaction_amount:
+                document.getElementById("usualAmount").value === ""
+                    ? null
+                    : Number(document.getElementById("usualAmount").value),
+            usual_transactions_per_hour:
+                document.getElementById("usualFrequency").value === ""
+                    ? null
+                    : Number(document.getElementById("usualFrequency").value)
+        };
+        lastTransactionAnalysis = { timestamp: new Date().toISOString(), inputs: inputSnapshot, result: result };
+        renderExplainability(inputSnapshot, result);
+        const score = Math.max(
+            0, Math.min(100, Number(result.risk_score) || 0)
+        );
+
+        const scoreElement = document.getElementById("riskScore");
+        scoreElement.replaceChildren();
+        scoreElement.append(document.createTextNode(String(score)));
+
+        [document.querySelector(".score-area"), document.getElementById("explainabilityPanel")]
+            .forEach(function (element) {
+                element.classList.remove("result-updated");
+                void element.offsetWidth;
+                element.classList.add("result-updated");
+            });
+
+        const suffix = document.createElement("span");
+        suffix.textContent = "/100";
+        scoreElement.append(suffix);
+
+        const level = document.getElementById("riskLevel");
+        level.textContent = result.risk_level || "Unknown";
+        level.className = "risk";
+
+        const normalizedLevel =
+            String(result.risk_level || "").toLowerCase();
+
+        level.classList.add(
+            ["low", "medium", "high"].includes(normalizedLevel)
+                ? normalizedLevel
+                : "informational"
+        );
+
+        document.getElementById("scoreBar").style.width = score + "%";
+
+        document.getElementById("probability").textContent =
+            `Explainable rule score · ${result.context_confidence}% context completeness. ${result.confidence_explanation}`;
+
+        const list = document.getElementById("reasonsList");
+        list.replaceChildren();
+
+        const reasons = Array.isArray(result.reasons) ? result.reasons : [];
+
+        if (reasons.length === 0) {
+            const item = document.createElement("li");
+            item.textContent =
+                "No indicators were flagged by the demonstration rules.";
+            list.appendChild(item);
+        } else {
+            reasons.forEach(function (reason) {
+                const item = document.createElement("li");
+                item.textContent = "• " + String(reason);
+                list.appendChild(item);
+            });
+        }
+
+        document.getElementById("transactionDisclaimer").textContent =
+            result.disclaimer ||
+            "Demonstration only. The model is not validated for real financial decisions.";
+    }
+
+    function renderExplainability(inputs, result) {
+        const panel = document.getElementById("explainabilityPanel");
+        panel.hidden = false;
+        panel.style.display = "block";
+        const factors = Array.isArray(result.signals) ? result.signals : [];
+        const box = document.getElementById("explainFactors");
+        box.replaceChildren();
+        const triggered = factors.filter(factor => factor.triggered);
+        document.getElementById("explainSummary").textContent =
+            `${result.risk_level} concern · ${result.risk_score}/100 from ${triggered.length} contributing signal(s). ` +
+            "Displayed points are the exact components used to calculate this rule-based score; untriggered signals are shown for context.";
+        if (!factors.length) {
+            const p = document.createElement("p");
+            p.className = "small-note";
+            p.textContent = "No signal details were returned by the analysis.";
+            box.appendChild(p);
+            return;
+        }
+        factors.forEach((f, index) => {
+            const row = document.createElement("div");
+            row.className = "explain-row";
+            row.style.animationDelay = `${Math.min(index * 45, 360)}ms`;
+            const label = document.createElement("span");
+            label.textContent = f.label;
+            label.title = f.explanation;
+            const track = document.createElement("div");
+            track.className = "explain-track";
+            const fill = document.createElement("div");
+            fill.className = "explain-fill";
+            fill.style.width = `${Math.min(100, Number(f.points) / 30 * 100)}%`;
+            fill.style.opacity = f.triggered ? "1" : ".2";
+            track.appendChild(fill);
+            const value = document.createElement("strong");
+            value.textContent = `${f.points > 0 ? "+" : ""}${f.points}`;
+            row.append(label, track, value);
+            box.appendChild(row);
+            const detail = document.createElement("p");
+            detail.className = "small-note";
+            detail.textContent = f.explanation;
+            box.appendChild(detail);
+        });
+        const context = document.createElement("p");
+        context.className = "small-note";
+        context.textContent = `Context completeness: ${result.context_confidence}% — ${result.confidence_explanation}`;
+        box.appendChild(context);
+    }
+
+    document.getElementById("downloadTransactionReport").addEventListener("click", () => {
+        if (!lastTransactionAnalysis) { alert("Please run Check Transaction first."); return; }
+        const report = {
+            project: "FinShield AI - Explainable Analysis Report",
+            generated_at: new Date().toISOString(),
+            analysis_timestamp: lastTransactionAnalysis.timestamp,
+            transaction_inputs: lastTransactionAnalysis.inputs,
+            analysis_result: lastTransactionAnalysis.result,
+            note: "Academic demo using a transparent heuristic. Scores are not validated real-world fraud probabilities."
+        };
+        const blob = new Blob([JSON.stringify(report, null, 2)], {type:"application/json"});
+        const url = URL.createObjectURL(blob); const a=document.createElement("a");
+        a.href=url; a.download="finshield_transaction_analysis_report.json"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+
+    // Scenario simulation buttons
+    const normalButton = document.getElementById("normalButton");
+    const suspiciousButton = document.getElementById("suspiciousButton");
+    const simulationMessage = document.getElementById("simulationMessage");
+    const simulationResults = document.getElementById("simulationResults");
+
+    normalButton.addEventListener("click", function () {
+        runSimulation("normal");
+    });
+
+    suspiciousButton.addEventListener("click", function () {
+        runSimulation("suspicious");
+    });
+
+    async function runSimulation(scenario) {
+        simulationMessage.textContent =
+            "Generating and analysing transactions...";
+        simulationMessage.className = "message muted";
+        simulationResults.replaceChildren();
+
+        normalButton.disabled = true;
+        suspiciousButton.disabled = true;
+
+        try {
+            const response = await fetch(
+                `${SIMULATION_URL}?scenario=${encodeURIComponent(scenario)}`
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    typeof data.detail === "string"
+                        ? data.detail
+                        : JSON.stringify(data.detail || data)
+                );
+            }
+
+            simulationMessage.textContent =
+                `${data.transaction_count} transactions analysed. ` +
+                `${data.chain_count} investigation case(s) detected.`;
+            simulationMessage.className = "message success";
+
+            renderSimulationSummary(data, scenario);
+
+        } catch (error) {
+            simulationMessage.textContent =
+                "Simulation failed: " + error.message +
+                ". Ensure FastAPI is running and CORS is enabled.";
+            simulationMessage.className = "message error";
+        } finally {
+            normalButton.disabled = false;
+            suspiciousButton.disabled = false;
+        }
+    }
+
+    function renderSimulationSummary(data, scenario) {
+        simulationResults.replaceChildren();
+
+        const heading = document.createElement("h2");
+        heading.style.marginTop = "22px";
+        heading.style.fontSize = "20px";
+        heading.textContent = scenario === "normal"
+            ? "Normal Scenario Results"
+            : "Suspicious Scenario Results";
+        simulationResults.appendChild(heading);
+
+        const summary = document.createElement("div");
+        summary.className = "summary-grid";
+
+        addSummaryItem(summary, "Scenario",
+            scenario === "normal" ? "Normal" : "Suspicious");
+
+        addSummaryItem(summary, "Transactions",
+            String(data.transaction_count));
+
+        addSummaryItem(summary, "Chain Findings",
+            String(data.chain_count));
+
+        simulationResults.appendChild(summary);
+
+        const chains = Array.isArray(data.chains) ? data.chains : [];
+
+        if (chains.length === 0) {
+            const empty = document.createElement("div");
+            empty.className = "empty-state";
+            empty.textContent =
+                "No connected suspicious chains were detected in this scenario. " +
+                "This does not guarantee that every transaction is safe.";
+            simulationResults.appendChild(empty);
+        } else {
+            chains.forEach(function (chain, index) {
+                renderChainCase(chain, index, simulationResults);
+            });
+        }
+
+        renderTransactionGraph(scenario, simulationResults);
+
+        renderTransactionTable(
+            Array.isArray(data.transactions) ? data.transactions : [],
+            simulationResults
+        );
+
+        const disclaimer = document.createElement("p");
+        disclaimer.className = "note";
+        disclaimer.textContent = data.disclaimer ||
+            "Synthetic demonstration data. Detected patterns require investigation and do not establish fraud.";
+        simulationResults.appendChild(disclaimer);
+    }
+
+
+    async function renderTransactionGraph(scenario, container) {
+        const card = document.createElement("section");
+        card.className = "graph-card";
+        const header = document.createElement("div");
+        header.className = "graph-header";
+        const title = document.createElement("h3");
+        title.textContent = "Transaction Network Graph";
+        header.appendChild(title);
+        const legend = document.createElement("div");
+        legend.className = "graph-legend";
+        legend.innerHTML = '<span><i class="legend-dot" style="background:#70b8ff"></i>Account</span><span><i class="legend-dot" style="background:#fb7185"></i>Transfer in detected chain</span>';
+        header.appendChild(legend);
+        card.appendChild(header);
+        const loading = document.createElement("p");
+        loading.className = "muted";
+        loading.textContent = "Loading transaction graph…";
+        card.appendChild(loading);
+        const note = document.createElement("p");
+        note.className = "graph-note";
+        note.textContent = "Arrows show transfer direction. Hover over an arrow to inspect its amount and timestamp. Highlighting means the transfer belongs to a detected pattern; it does not prove fraud. Data is synthetic.";
+        card.appendChild(note);
+        // Place graph before transaction history for a natural investigation workflow.
+        const tableHeading = Array.from(container.children).find(el => el.tagName === "H3" && el.textContent === "Generated Transaction History");
+        if (tableHeading) container.insertBefore(card, tableHeading);
+        else container.appendChild(card);
+
+        try {
+            const response = await fetch(`${GRAPH_URL}?scenario=${encodeURIComponent(scenario)}`);
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.detail || "Graph request failed");
+            loading.remove();
+            drawTransactionGraph(card, data);
+        } catch (error) {
+            loading.className = "message error";
+            loading.textContent = "Could not load graph: " + error.message + ". Check that the /transaction-graph endpoint is running.";
+        }
+    }
+
+    function drawTransactionGraph(card, data) {
+        const nodes = Array.isArray(data.nodes) ? data.nodes : [];
+        const edges = Array.isArray(data.edges) ? data.edges : [];
+        if (!nodes.length) {
+            const empty = document.createElement("p");
+            empty.className = "empty-state";
+            empty.textContent = "No account connections were returned.";
+            card.appendChild(empty);
+            return;
+        }
+
+        const flaggedIds = new Set();
+        (Array.isArray(data.chains) ? data.chains : []).forEach(chain => {
+            (chain.transaction_ids || []).forEach(id => flaggedIds.add(id));
+        });
+        const flaggedAccounts = new Set();
+        edges.forEach(edge => {
+            if (flaggedIds.has(edge.id) || edge.suspicious_pattern) {
+                flaggedAccounts.add(edge.source);
+                flaggedAccounts.add(edge.target);
+            }
+        });
+
+        const width = 900, height = 460, cx = width / 2, cy = height / 2;
+        const rx = Math.min(330, 90 + nodes.length * 23);
+        const ry = Math.min(155, 60 + nodes.length * 11);
+        const positions = {};
+        nodes.forEach((node, i) => {
+            const angle = (-Math.PI / 2) + (2 * Math.PI * i / nodes.length);
+            positions[node.id] = { x: cx + rx * Math.cos(angle), y: cy + ry * Math.sin(angle) };
+        });
+
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+        svg.setAttribute("role", "img");
+        svg.setAttribute("aria-label", "Transaction network showing account nodes and directional transfers");
+        svg.classList.add("transaction-graph");
+        const defs = document.createElementNS(svgNS, "defs");
+        const marker = document.createElementNS(svgNS, "marker");
+        marker.setAttribute("id", "finshield-arrow");
+        marker.setAttribute("markerWidth", "8"); marker.setAttribute("markerHeight", "8");
+        marker.setAttribute("refX", "6"); marker.setAttribute("refY", "3");
+        marker.setAttribute("orient", "auto"); marker.setAttribute("markerUnits", "strokeWidth");
+        const tip = document.createElementNS(svgNS, "path");
+        tip.setAttribute("d", "M0,0 L0,6 L6,3 z"); tip.setAttribute("fill", "#8da4bf");
+        marker.appendChild(tip); defs.appendChild(marker); svg.appendChild(defs);
+
+        edges.forEach((edge, i) => {
+            const a = positions[edge.source], b = positions[edge.target];
+            if (!a || !b) return;
+            const line = document.createElementNS(svgNS, "line");
+            line.setAttribute("x1", a.x); line.setAttribute("y1", a.y);
+            line.setAttribute("x2", b.x); line.setAttribute("y2", b.y);
+            const flagged = flaggedIds.has(edge.id) || edge.suspicious_pattern;
+            line.setAttribute("class", flagged ? "graph-edge flagged" : "graph-edge");
+            line.style.animationDelay = `${Math.min(i * 90, 720)}ms`;
+            line.setAttribute("marker-end", "url(#finshield-arrow)");
+            const title = document.createElementNS(svgNS, "title");
+            title.textContent = `${edge.id}: ${edge.source} → ${edge.target}; ₹${Number(edge.amount || 0).toLocaleString("en-IN")}; ${formatTime(edge.timestamp)}${flagged ? "; part of detected chain" : ""}`;
+            line.appendChild(title); svg.appendChild(line);
+        });
+
+        nodes.forEach((node, index) => {
+            const pos = positions[node.id];
+            const group = document.createElementNS(svgNS, "g");
+            const circle = document.createElementNS(svgNS, "circle");
+            circle.setAttribute("cx", pos.x); circle.setAttribute("cy", pos.y); circle.setAttribute("r", "25");
+            circle.setAttribute("class", flaggedAccounts.has(node.id) ? "graph-node chain-node" : "graph-node");
+            circle.style.animationDelay = `${Math.min(index * 70, 560)}ms`;
+            const title = document.createElementNS(svgNS, "title"); title.textContent = `Account ${node.label || node.id}`;
+            circle.appendChild(title); group.appendChild(circle);
+            const label = document.createElementNS(svgNS, "text");
+            label.setAttribute("x", pos.x); label.setAttribute("y", pos.y); label.setAttribute("class", "graph-node-label");
+            label.textContent = node.label || node.id; group.appendChild(label); svg.appendChild(group);
+        });
+
+        const scroll = document.createElement("div"); scroll.className = "graph-scroll"; scroll.appendChild(svg); card.appendChild(scroll);
+        const summary = document.createElement("p"); summary.className = "graph-note";
+        summary.textContent = `${nodes.length} accounts · ${edges.length} transfers · ${flaggedIds.size} transfer(s) in detected chain(s).`;
+        card.appendChild(summary);
+    }
+
+    function addSummaryItem(container, label, value) {
+        const item = document.createElement("div");
+        item.className = "summary-item";
+
+        const labelElement = document.createElement("div");
+        labelElement.className = "label";
+        labelElement.textContent = label;
+
+        const valueElement = document.createElement("div");
+        valueElement.className = "value";
+        valueElement.textContent = value;
+
+        item.append(labelElement, valueElement);
+        container.appendChild(item);
+    }
+
+    function renderChainCase(chain, index, container) {
+        const card = document.createElement("article");
+        card.className = "case-card";
+
+        const heading = document.createElement("h3");
+        heading.textContent = `Investigation Case ${index + 1}`;
+        card.appendChild(heading);
+
+        const score = document.createElement("span");
+        score.className = "score-pill";
+        score.textContent =
+            `Pattern score: ${Number(chain.pattern_score) || 0}/100`;
+        card.appendChild(score);
+
+        if (chain.priority_level) {
+            const priority = document.createElement("span");
+            const normalizedPriority = String(chain.priority_level).toLowerCase();
+            priority.className = "priority-badge " + (["high", "medium", "low"].includes(normalizedPriority) ? "priority-" + normalizedPriority : "");
+            priority.textContent = `Investigation priority: ${chain.priority_level} (${Number(chain.priority_score) || 0}/100)`;
+            card.appendChild(priority);
+        }
+
+        addDetail(card, "Transfers", chain.transaction_count);
+        if (Array.isArray(chain.priority_factors)) {
+            addDetail(card, "Priority factors", chain.priority_factors.join(" · "));
+        }
+        addDetail(card, "Initial transfer amount",
+            `₹${Number(chain.total_initial_amount || 0).toLocaleString("en-IN")}`);
+        addDetail(card, "Start time", formatTime(chain.start_time));
+        addDetail(card, "End time", formatTime(chain.end_time));
+
+        const accountsTitle = document.createElement("p");
+        accountsTitle.textContent = "Connected account flow:";
+        accountsTitle.style.fontWeight = "bold";
+        accountsTitle.style.marginTop = "15px";
+        card.appendChild(accountsTitle);
+
+        const flow = document.createElement("div");
+        flow.className = "account-flow";
+
+        const accounts = Array.isArray(chain.accounts) ? chain.accounts : [];
+
+        accounts.forEach(function (account, index) {
+            if (index > 0) {
+                const arrow = document.createElement("span");
+                arrow.className = "flow-arrow";
+                arrow.textContent = "→";
+                flow.appendChild(arrow);
+            }
+
+            const badge = document.createElement("span");
+            badge.className = "account";
+            badge.textContent = String(account);
+            flow.appendChild(badge);
+        });
+
+        card.appendChild(flow);
+
+        addDetail(card, "Transaction IDs",
+            (chain.transaction_ids || []).join(", "));
+        addDetail(card, "Reason", chain.reason);
+        addDetail(card, "Status", chain.status);
+        const statusWrap = document.createElement("div"); statusWrap.className = "case-status";
+        const statusLabel = document.createElement("label"); statusLabel.textContent = "Investigation workflow status";
+        const statusSelect = document.createElement("select");
+        ["Open", "Under Review", "Escalated", "Resolved"].forEach(v => { const o=document.createElement("option"); o.value=v; o.textContent=v; statusSelect.appendChild(o); });
+        statusSelect.value = "Open";
+        statusSelect.addEventListener("change", () => { statusLabel.textContent = "Investigation workflow status: " + statusSelect.value; });
+        statusWrap.append(statusLabel, statusSelect); card.appendChild(statusWrap);
+
+        container.appendChild(card);
+    }
+
+    function addDetail(container, label, value) {
+        const p = document.createElement("p");
+        const strong = document.createElement("strong");
+        strong.textContent = label + ": ";
+
+        p.appendChild(strong);
+        p.appendChild(document.createTextNode(
+            value === undefined || value === null ? "Not provided" : String(value)
+        ));
+
+        container.appendChild(p);
+    }
+
+    function formatTime(value) {
+        if (!value) return "Not provided";
+
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return String(value);
+
+        return date.toLocaleString();
+    }
+
+    function renderTransactionTable(transactions, container) {
+        const heading = document.createElement("h3");
+        heading.textContent = "Generated Transaction History";
+        heading.style.marginTop = "25px";
+        container.appendChild(heading);
+
+        if (transactions.length === 0) {
+            const p = document.createElement("p");
+            p.className = "empty-state";
+            p.textContent = "No transaction records were returned.";
+            container.appendChild(p);
+            return;
+        }
+
+        const wrap = document.createElement("div");
+        wrap.className = "table-wrap";
+
+        const table = document.createElement("table");
+        const thead = document.createElement("thead");
+        const headerRow = document.createElement("tr");
+
+        ["Transaction ID", "Time", "Sender", "Receiver", "Amount (₹)"]
+            .forEach(function (label) {
+                const th = document.createElement("th");
+                th.textContent = label;
+                headerRow.appendChild(th);
+            });
+
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        const tbody = document.createElement("tbody");
+
+        transactions.forEach(function (tx) {
+            const row = document.createElement("tr");
+            row.style.animationDelay = `${Math.min(tbody.children.length * 35, 420)}ms`;
+
+            const values = [
+                tx.transaction_id,
+                formatTime(tx.timestamp),
+                tx.sender,
+                tx.receiver,
+                Number(tx.amount || 0).toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })
+            ];
+
+            values.forEach(function (value) {
+                const td = document.createElement("td");
+                td.textContent = value === undefined ? "" : String(value);
+                row.appendChild(td);
+            });
+
+            tbody.appendChild(row);
+        });
+
+        table.appendChild(tbody);
+        wrap.appendChild(table);
+        container.appendChild(wrap);
+    }
+
+
+// Live monitoring lab: dynamic synthetic transactions and immediate re-analysis.
+const MONITOR_URL = `${API_BASE}/monitoring`;
+const liveForm = document.getElementById("liveTransactionForm");
+const liveStatus = document.getElementById("liveMonitorStatus");
+const liveGraph = document.getElementById("liveGraph");
+const liveCases = document.getElementById("liveCases");
+const addLiveButton = document.getElementById("addLiveTransactionButton");
+const demoChainButton = document.getElementById("demoChainButton");
+const resetMonitorButton = document.getElementById("resetMonitorButton");
+const importTransactionsButton = document.getElementById("importTransactionsButton");
+const seedHistoryButton = document.getElementById("seedHistoryButton");
+const transactionHistoryRows = document.getElementById("transactionHistoryRows");
+const transactionHistorySearch = document.getElementById("transactionHistorySearch");
+const transactionHistoryRisk = document.getElementById("transactionHistoryRisk");
+const transactionHistoryCount = document.getElementById("transactionHistoryCount");
+let monitoredTransactionHistory = [];
+let monitoredTransactionChains = [];
+
+async function monitorRequest(url, options = {}) {
+    const response = await fetch(url, options);
+    const data = await response.json();
+    if (!response.ok) {
+        const detail = typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail || data);
+        throw new Error(detail || "Monitoring request failed");
+    }
+    return data;
+}
+
+function renderTransactionHistory() {
+    const search = transactionHistorySearch.value.trim().toLowerCase();
+    const riskFilter = transactionHistoryRisk.value;
+    const chainsByTransaction = new Map();
+    monitoredTransactionChains.forEach(chain => {
+        (chain.transaction_ids || []).forEach(transactionId => {
+            chainsByTransaction.set(transactionId, chain);
+        });
+    });
+    const filtered = monitoredTransactionHistory
+        .filter(transaction => {
+            const searchText = [
+                transaction.transaction_id,
+                transaction.sender,
+                transaction.receiver,
+                transaction.location,
+                transaction.channel
+            ].join(" ").toLowerCase();
+            const matchesSearch = !search || searchText.includes(search);
+            const matchesRisk = riskFilter === "all"
+                || String(transaction.risk_level || "informational").toLowerCase() === riskFilter;
+            return matchesSearch && matchesRisk;
+        })
+        .slice()
+        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+    transactionHistoryCount.textContent = search || riskFilter !== "all"
+        ? `${filtered.length} of ${monitoredTransactionHistory.length} transactions`
+        : `${monitoredTransactionHistory.length} transactions`;
+    transactionHistoryRows.replaceChildren();
+    if (!filtered.length) {
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.colSpan = 7;
+        cell.textContent = monitoredTransactionHistory.length
+            ? "No transactions match these filters."
+            : "Import transactions or add activity to build transaction history.";
+        row.appendChild(cell);
+        transactionHistoryRows.appendChild(row);
+        return;
+    }
+
+    filtered.forEach((transaction, index) => {
+        const chain = chainsByTransaction.get(transaction.transaction_id);
+        const row = document.createElement("tr");
+        const risk = String(transaction.risk_level || "Informational");
+        const riskClass = risk.toLowerCase();
+        const formattedTime = transaction.timestamp
+            ? new Date(transaction.timestamp).toLocaleString()
+            : "Time unavailable";
+        const amount = new Intl.NumberFormat("en-IN", {
+            style: "currency",
+            currency: "INR",
+            minimumFractionDigits: 2
+        }).format(Number(transaction.amount || 0));
+        [
+            formattedTime,
+            transaction.transaction_id,
+            `${transaction.sender} → ${transaction.receiver}`,
+            amount,
+            risk,
+            `${transaction.confidence}%`
+        ].forEach((value, columnIndex) => {
+            const cell = document.createElement("td");
+            if (columnIndex === 4) {
+                const badge = document.createElement("span");
+                badge.className = `history-risk ${["high", "medium", "low", "informational"].includes(riskClass) ? riskClass : "informational"}`;
+                badge.textContent = risk;
+                cell.appendChild(badge);
+                if (chain) {
+                    const linkedBadge = document.createElement("span");
+                    linkedBadge.className = "history-risk medium";
+                    linkedBadge.style.marginLeft = "6px";
+                    linkedBadge.textContent = "Linked";
+                    cell.appendChild(linkedBadge);
+                }
+            } else {
+                cell.textContent = value == null ? "—" : String(value);
+            }
+            row.appendChild(cell);
+        });
+        const actionCell = document.createElement("td");
+        const detailsId = `transaction-analysis-${index}`;
+        const toggle = document.createElement("button");
+        toggle.type = "button";
+        toggle.className = "btn-secondary";
+        toggle.textContent = "View analysis";
+        toggle.setAttribute("aria-expanded", "false");
+        toggle.setAttribute("aria-controls", detailsId);
+        actionCell.appendChild(toggle);
+        row.appendChild(actionCell);
+        transactionHistoryRows.appendChild(row);
+
+        const detailsRow = document.createElement("tr");
+        detailsRow.className = "transaction-analysis-row";
+        const detailsCell = document.createElement("td");
+        detailsCell.colSpan = 7;
+        const details = document.createElement("div");
+        details.className = "transaction-analysis-details";
+        details.id = detailsId;
+        details.hidden = true;
+        const heading = document.createElement("strong");
+        heading.textContent = `Analysis for ${transaction.transaction_id}`;
+        details.appendChild(heading);
+        const reasonList = document.createElement("ul");
+        const reasons = Array.isArray(transaction.reasons) ? transaction.reasons : [];
+        reasons.forEach(reason => {
+            const item = document.createElement("li");
+            item.textContent = String(reason);
+            reasonList.appendChild(item);
+        });
+        if (chain) {
+            const linkedReason = document.createElement("li");
+            linkedReason.textContent = `Part of a rapid linked transfer sequence: ${(chain.accounts || []).join(" → ")}.`;
+            reasonList.appendChild(linkedReason);
+            const linkedIds = document.createElement("li");
+            linkedIds.textContent = `Sequence transactions: ${(chain.transaction_ids || []).join(", ")}.`;
+            reasonList.appendChild(linkedIds);
+        }
+        if (!reasonList.children.length) {
+            const noReasons = document.createElement("li");
+            noReasons.textContent = "No configured risk signal was triggered by the available context.";
+            reasonList.appendChild(noReasons);
+        }
+        details.appendChild(reasonList);
+        const context = document.createElement("div");
+        context.className = "transaction-analysis-meta";
+        [
+            `Source: ${transaction.source || "unknown"}`,
+            `Location: ${transaction.location || "not supplied"}`,
+            `Channel: ${transaction.channel || "not supplied"}`,
+            `Context confidence: ${transaction.confidence}%`,
+            `Score: ${transaction.risk_score}/100 (heuristic)`
+        ].forEach(label => {
+            const tag = document.createElement("span");
+            tag.textContent = label;
+            context.appendChild(tag);
+        });
+        details.appendChild(context);
+        detailsCell.appendChild(details);
+        detailsRow.appendChild(detailsCell);
+        transactionHistoryRows.appendChild(detailsRow);
+
+        toggle.addEventListener("click", () => {
+            const expanded = toggle.getAttribute("aria-expanded") === "true";
+            toggle.setAttribute("aria-expanded", String(!expanded));
+            toggle.textContent = expanded ? "View analysis" : "Hide analysis";
+            details.hidden = expanded;
+        });
+    });
+}
+
+transactionHistorySearch.addEventListener("input", renderTransactionHistory);
+transactionHistoryRisk.addEventListener("change", renderTransactionHistory);
+
+
+function renderCasePrioritization(cases) {
+    const container = document.getElementById("priorityCases");
+    const caseCount = document.getElementById("priorityCaseCount");
+    const highCount = document.getElementById("priorityHighCount");
+    const topScore = document.getElementById("priorityTopScore");
+    const ranked = (Array.isArray(cases) ? cases : []).slice().sort((a, b) => {
+        const resolvedOrder = Number(a.status === "Resolved") - Number(b.status === "Resolved");
+        return resolvedOrder || Number(b.priority_score) - Number(a.priority_score);
+    });
+    const unresolved = ranked.filter(item => item.status !== "Resolved");
+    caseCount.textContent = String(unresolved.length);
+    highCount.textContent = String(unresolved.filter(item => item.priority_level === "High").length);
+    topScore.textContent = unresolved.length ? `${unresolved[0].priority_score}/100` : "--";
+    container.replaceChildren();
+    if (!ranked.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = "No cases meet the current review threshold. Add activity or load the sample history and test an unusual transaction.";
+        container.appendChild(empty);
+        return;
+    }
+    ranked.forEach((item, rank) => {
+        const card = document.createElement("article");
+        card.className = "priority-item";
+        const heading = document.createElement("h3");
+        heading.textContent = `Priority #${rank + 1} · ${item.case_id}`;
+        card.appendChild(heading);
+        const badge = document.createElement("span");
+        const normalized = String(item.priority_level).toLowerCase();
+        badge.className = "priority-badge " + (["high", "medium", "low"].includes(normalized) ? `priority-${normalized}` : "priority-medium");
+        badge.textContent = `${item.priority_level} concern`;
+        card.appendChild(badge);
+        const score = document.createElement("div");
+        score.className = "priority-score";
+        score.textContent = `${item.priority_score}/100`;
+        card.appendChild(score);
+        const accounts = document.createElement("p");
+        accounts.style.marginTop = "8px";
+        accounts.textContent = `${item.sender} → ${item.receiver} · ₹${Number(item.amount).toLocaleString("en-IN")} · ${new Date(item.timestamp).toLocaleString()}`;
+        card.appendChild(accounts);
+        const factorsHeading = document.createElement("p");
+        factorsHeading.style.fontWeight = "700";
+        factorsHeading.style.marginTop = "12px";
+        factorsHeading.textContent = `Why flagged · context confidence ${item.confidence}%:`;
+        card.appendChild(factorsHeading);
+        const list = document.createElement("ul");
+        list.style.marginLeft = "18px";
+        item.reasons.forEach(factor => {
+            const li = document.createElement("li");
+            li.textContent = String(factor);
+            list.appendChild(li);
+        });
+        card.appendChild(list);
+        if (item.linked_transaction_ids.length) {
+            const links = document.createElement("p");
+            links.style.marginTop = "10px";
+            links.textContent = `Linked transactions: ${item.linked_transaction_ids.join(", ")}`;
+            card.appendChild(links);
+        }
+        const workflow = document.createElement("div");
+        workflow.className = "case-status";
+        const status = document.createElement("select");
+        status.setAttribute("aria-label", `Status for ${item.case_id}`);
+        ["Open", "Under Review", "Escalated", "Resolved"].forEach(value => {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = value;
+            status.appendChild(option);
+        });
+        status.value = item.status;
+        const notes = document.createElement("textarea");
+        notes.rows = 2;
+        notes.maxLength = 2000;
+        notes.placeholder = "Analyst notes";
+        notes.value = item.notes || "";
+        notes.setAttribute("aria-label", `Analyst notes for ${item.case_id}`);
+        const save = document.createElement("button");
+        save.type = "button";
+        save.className = "btn-secondary";
+        save.textContent = "Save case review";
+        save.addEventListener("click", async () => {
+            save.disabled = true;
+            try {
+                await monitorRequest(`${MONITOR_URL}/cases/${encodeURIComponent(item.case_id)}`, {
+                    method: "PATCH",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({status: status.value, notes: notes.value})
+                });
+                await refreshLiveMonitoring();
+                liveStatus.className = "live-status success";
+                liveStatus.textContent = "Case status and analyst notes saved.";
+            } catch (error) {
+                save.textContent = "Save failed";
+                liveStatus.className = "live-status error";
+                liveStatus.textContent = `Could not save case review: ${error.message}`;
+            } finally {
+                save.disabled = false;
+            }
+        });
+        workflow.append(status, save);
+        card.append(workflow, notes);
+        container.appendChild(card);
+    });
+}
+
+async function refreshLiveMonitoring() {
+    const data = await monitorRequest(MONITOR_URL);
+    monitoredTransactionHistory = Array.isArray(data.transactions) ? data.transactions : [];
+    monitoredTransactionChains = Array.isArray(data.chains) ? data.chains : [];
+    renderTransactionHistory();
+    document.getElementById("liveTxCount").textContent = String(data.transaction_count || 0);
+    document.getElementById("liveAccountCount").textContent = String((data.nodes || []).length);
+    document.getElementById("liveChainCount").textContent = String(data.chain_count || 0);
+    liveGraph.replaceChildren();
+    if ((data.nodes || []).length) {
+        const graphCard = document.createElement("section");
+        graphCard.className = "graph-card";
+        const graphTitle = document.createElement("h3");
+        graphTitle.textContent = "Updated transaction network";
+        graphCard.appendChild(graphTitle);
+        drawTransactionGraph(graphCard, data);
+        liveGraph.appendChild(graphCard);
+    } else {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = "No transactions yet. Add one or inject the demo sequence.";
+        liveGraph.appendChild(empty);
+    }
+    renderCasePrioritization(data.cases || []);
+    liveCases.replaceChildren();
+    (data.chains || []).forEach((chain, index) => {
+        const item = document.createElement("article");
+        item.className = "live-case";
+        const title = document.createElement("p");
+        const strong = document.createElement("strong");
+        strong.textContent = `Investigation case ${index + 1} · Pattern score ${chain.pattern_score || 0}/100`;
+        title.appendChild(strong);
+        item.appendChild(title);
+        const accounts = document.createElement("p");
+        accounts.textContent = `Accounts: ${(chain.accounts || []).join(" → ")}`;
+        item.appendChild(accounts);
+        const ids = document.createElement("p");
+        ids.textContent = `Transactions: ${(chain.transaction_ids || []).join(", ")}`;
+        item.appendChild(ids);
+        const reason = document.createElement("p");
+        reason.textContent = chain.reason || "Rapid connected transfers detected.";
+        item.appendChild(reason);
+        const status = document.createElement("p");
+        status.textContent = chain.status || "Requires investigation; not confirmed fraud";
+        item.appendChild(status);
+        const priorityExplanation = document.createElement("p");
+        priorityExplanation.textContent = `Priority explanation: pattern score ${chain.pattern_score || 0}/100; ${chain.transaction_count || (chain.transaction_ids || []).length} connected transfer(s); initial amount ₹${Number(chain.total_initial_amount || 0).toLocaleString("en-IN")}. These are ranking signals, not proof of fraud.`;
+        item.appendChild(priorityExplanation);
+        liveCases.appendChild(item);
+    });
+    if (!(data.chains || []).length && (data.transactions || []).length) {
+        const noCase = document.createElement("p");
+        noCase.className = "muted";
+        noCase.textContent = "No chain currently meets the demo rule. Continue adding transactions to monitor changes.";
+        liveCases.appendChild(noCase);
+    }
+    return data;
+}
+
+liveForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    addLiveButton.disabled = true;
+    liveStatus.className = "live-status muted";
+    liveStatus.textContent = "Adding transaction and recalculating patterns…";
+    try {
+        const payload = {
+            sender: document.getElementById("liveSender").value.trim(),
+            receiver: document.getElementById("liveReceiver").value.trim(),
+            amount: Number(document.getElementById("liveAmount").value),
+            minutes_after_previous: Number(document.getElementById("liveGap").value),
+            location: document.getElementById("liveLocation").value.trim() || null,
+            channel: document.getElementById("liveChannel").value || null
+        };
+        const data = await monitorRequest(`${MONITOR_URL}/transactions`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+        });
+        await refreshLiveMonitoring();
+        liveStatus.className = "live-status success";
+        liveStatus.textContent = `${data.message} Risk score ${data.assessment.risk_score}/100 (${data.assessment.risk_level}); context confidence ${data.assessment.confidence}%. ${data.assessment.reasons[0]}`;
+    } catch (error) {
+        liveStatus.className = "live-status error";
+        liveStatus.textContent = "Could not add transaction: " + error.message;
+    } finally {
+        addLiveButton.disabled = false;
+    }
+});
+
+resetMonitorButton.addEventListener("click", async () => {
+    if (!window.confirm("Clear all imported transactions and investigation case reviews from this local database?")) return;
+    resetMonitorButton.disabled = true;
+    try {
+        const data = await monitorRequest(`${MONITOR_URL}/reset`, {method: "POST"});
+        await refreshLiveMonitoring();
+        liveStatus.className = "live-status success";
+        liveStatus.textContent = data.message;
+    } catch (error) {
+        liveStatus.className = "live-status error";
+        liveStatus.textContent = "Reset failed: " + error.message;
+    } finally {
+        resetMonitorButton.disabled = false;
+    }
+});
+
+function parseCsvRows(text) {
+    const rows = [];
+    let row = [];
+    let field = "";
+    let quoted = false;
+    for (let index = 0; index < text.length; index += 1) {
+        const char = text[index];
+        if (char === '"' && quoted && text[index + 1] === '"') {
+            field += '"';
+            index += 1;
+        } else if (char === '"') {
+            quoted = !quoted;
+        } else if (char === "," && !quoted) {
+            row.push(field.trim());
+            field = "";
+        } else if ((char === "\n" || char === "\r") && !quoted) {
+            if (char === "\r" && text[index + 1] === "\n") index += 1;
+            row.push(field.trim());
+            if (row.some(value => value !== "")) rows.push(row);
+            row = [];
+            field = "";
+        } else {
+            field += char;
+        }
+    }
+    if (quoted) throw new Error("CSV contains an unclosed quoted field.");
+    row.push(field.trim());
+    if (row.some(value => value !== "")) rows.push(row);
+    return rows;
+}
+
+importTransactionsButton.addEventListener("click", async () => {
+    const file = document.getElementById("transactionCsv").files[0];
+    const importStatus = document.getElementById("importStatus");
+    if (!file) {
+        importStatus.className = "live-status error";
+        importStatus.textContent = "Choose a CSV file to import.";
+        return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+        importStatus.className = "live-status error";
+        importStatus.textContent = "CSV files must be 5 MB or smaller.";
+        return;
+    }
+    importTransactionsButton.disabled = true;
+    importStatus.className = "live-status muted";
+    importStatus.textContent = "Reading and analysing transaction file…";
+    try {
+        const rows = parseCsvRows(await file.text());
+        if (rows.length < 2) throw new Error("CSV needs a header and at least one transaction.");
+        if (rows.length > 501) throw new Error("Import up to 500 transactions per CSV file.");
+        const headers = rows[0].map(value => value.toLowerCase().replace(/^\uFEFF/, ""));
+        const aliases = {
+            sender: ["sender", "account_id"],
+            receiver: ["receiver", "counterparty_id"],
+            amount: ["amount"],
+            transaction_id: ["transaction_id", "id"],
+            timestamp: ["timestamp", "transaction_time"],
+            location: ["location", "city"],
+            channel: ["channel", "transaction_channel"]
+        };
+        const columns = {};
+        Object.entries(aliases).forEach(([field, names]) => {
+            columns[field] = headers.findIndex(header => names.includes(header));
+        });
+        for (const required of ["sender", "receiver", "amount"]) {
+            if (columns[required] < 0) throw new Error(`CSV is missing required "${required}" header.`);
+        }
+        const transactions = rows.slice(1).map((values, index) => {
+            const get = (field) => columns[field] >= 0 ? values[columns[field]] || "" : "";
+            const amount = Number(get("amount"));
+            if (!Number.isFinite(amount) || amount <= 0) {
+                throw new Error(`Row ${index + 2} has an invalid amount.`);
+            }
+            return {
+                transaction_id: get("transaction_id") || null,
+                timestamp: get("timestamp") || null,
+                sender: get("sender"),
+                receiver: get("receiver"),
+                amount,
+                location: get("location") || null,
+                channel: get("channel") || null
+            };
+        });
+        const result = await monitorRequest(`${MONITOR_URL}/import`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({transactions})
+        });
+        await refreshLiveMonitoring();
+        importStatus.className = "live-status success";
+        importStatus.textContent = `Imported and analysed ${result.imported_count} transaction(s); ${result.cases.length} investigation case(s) now need review.`;
+    } catch (error) {
+        importStatus.className = "live-status error";
+        importStatus.textContent = `CSV import failed: ${error.message}`;
+    } finally {
+        importTransactionsButton.disabled = false;
+    }
+});
+
+seedHistoryButton.addEventListener("click", async () => {
+    seedHistoryButton.disabled = true;
+    liveStatus.className = "live-status muted";
+    liveStatus.textContent = "Creating a synthetic account baseline for comparison…";
+    try {
+        const now = Date.now();
+        const transactions = Array.from({length: 10}, (_, index) => ({
+            transaction_id: `SAMPLE-${now}-${index + 1}`,
+            sender: "ACC100",
+            receiver: "ACC201",
+            amount: 800 + (index % 4) * 75,
+            timestamp: new Date(now - (30 - index * 3) * 86400000).toISOString(),
+            location: "Bengaluru",
+            channel: "mobile"
+        }));
+        const result = await monitorRequest(`${MONITOR_URL}/import`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({transactions})
+        });
+        await refreshLiveMonitoring();
+        liveStatus.className = "live-status success";
+        liveStatus.textContent = `Loaded ${result.imported_count} synthetic account-history transactions. Try the prefilled ₹50,000 transfer to a new recipient from Chennai to see the amount, recipient, and location signals combine.`;
+    } catch (error) {
+        liveStatus.className = "live-status error";
+        liveStatus.textContent = `Could not load sample history: ${error.message}`;
+    } finally {
+        seedHistoryButton.disabled = false;
+    }
+});
+
+demoChainButton.addEventListener("click", async () => {
+    demoChainButton.disabled = true;
+    liveStatus.className = "live-status muted";
+    liveStatus.textContent = "Adding three linked sample transfers…";
+    try {
+        const sequence = [
+            {sender: "ACC100", receiver: "ACC101", amount: 10000, minutes_after_previous: 0, location: "Bengaluru", channel: "mobile"},
+            {sender: "ACC101", receiver: "ACC102", amount: 9700, minutes_after_previous: 2, location: "Bengaluru", channel: "mobile"},
+            {sender: "ACC102", receiver: "ACC103", amount: 9400, minutes_after_previous: 2, location: "Bengaluru", channel: "mobile"}
+        ];
+        let data;
+        for (const tx of sequence) {
+            data = await monitorRequest(`${MONITOR_URL}/transactions`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(tx)
+            });
+            await refreshLiveMonitoring();
+        }
+        liveStatus.className = "live-status success";
+        liveStatus.textContent = `Demo sequence complete: ${data.transaction_count} transfers added and ${data.chain_count} investigation case(s) detected.`;
+    } catch (error) {
+        liveStatus.className = "live-status error";
+        liveStatus.textContent = "Demo sequence failed: " + error.message;
+    } finally {
+        demoChainButton.disabled = false;
+    }
+});
+
+refreshLiveMonitoring().catch(error => {
+    liveStatus.className = "live-status error";
+    liveStatus.textContent = "Live monitor unavailable: " + error.message + ". Ensure the backend is running.";
+});
+
+</script>
+
+<style>
+#finshieldAdvancedPanel{margin:22px auto;padding:20px;border:1px solid #334155;border-radius:16px;background:#0b1220;color:#e2e8f0;max-width:1200px}
+#finshieldAdvancedPanel h2{margin:0 0 8px;font-size:22px;color:#67e8f9}
+#finshieldAdvancedPanel .adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:16px}
+#finshieldAdvancedPanel .adv-card{padding:15px;border:1px solid #334155;border-radius:12px;background:#111c2e}
+#finshieldAdvancedPanel label{display:block;font-size:13px;color:#cbd5e1;margin:9px 0 4px}
+#finshieldAdvancedPanel input,#finshieldAdvancedPanel select,#finshieldAdvancedPanel textarea{width:100%;box-sizing:border-box;padding:9px;border:1px solid #475569;border-radius:8px;background:#07101e;color:#f8fafc}
+#finshieldAdvancedPanel button{margin-top:10px;padding:10px 13px;border:0;border-radius:8px;background:#0891b2;color:white;font-weight:700;cursor:pointer}
+#finshieldAdvancedPanel .muted{font-size:12px;color:#94a3b8}
+#finshieldAdvancedPanel .pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#164e63;color:#cffafe;font-size:12px}
+#finshieldAdvancedPanel pre{white-space:pre-wrap;word-break:break-word;background:#020617;padding:12px;border-radius:8px;max-height:260px;overflow:auto}
+</style>
+<section id="finshieldAdvancedPanel">
+  <h2>FinShield AI — Account Overview</h2>
+  <p class="muted">Review your saved account details and keep the profile current for demo operations.</p>
+  <div class="adv-grid">
+    <div class="adv-card">
+      <h3>1. Risk Review Checklist</h3>
+      <p class="muted">Record an analyst review for the current transaction.</p>
+      <label for="advReviewStatus">Review status</label>
+      <select id="advReviewStatus"><option>Not reviewed</option><option>Reviewed - no concern</option><option>Needs more information</option><option>Escalate for investigation</option></select>
+      <label for="advReviewNotes">Analyst notes</label>
+      <textarea id="advReviewNotes" rows="3" placeholder="Add the reason for your decision..."></textarea>
+      <button id="advSaveReview">Save review locally</button>
+      <div id="advReviewSaved" class="muted" aria-live="polite"></div>
+    </div>
+    <div class="adv-card">
+      <h3>2. My Account</h3>
+      <p class="muted">Saved personal and login details for your registered demo profile.</p>
+      <div id="accountSummary" class="small-note"></div>
+      <label for="accountName">Full name</label>
+      <input id="accountName" type="text" autocomplete="name">
+      <label for="accountEmail">Email address</label>
+      <input id="accountEmail" type="email" autocomplete="username">
+      <label for="accountPassword">Password</label>
+      <input id="accountPassword" type="password" autocomplete="current-password">
+      <label for="accountPhone">Mobile number</label>
+      <input id="accountPhone" type="tel" autocomplete="tel">
+      <label for="accountType">Account type</label>
+      <select id="accountType">
+        <option value="Personal">Personal</option>
+        <option value="Business">Business</option>
+        <option value="Premium">Premium</option>
+      </select>
+      <label for="accountCountry">Country</label>
+      <input id="accountCountry" type="text" autocomplete="country-name">
+      <label for="accountAddress">Home address</label>
+      <input id="accountAddress" type="text" autocomplete="street-address">
+      <button id="saveAccountDetails">Save account details</button>
+      <div id="accountSaveMessage" class="muted" aria-live="polite"></div>
+    </div>
+    <div class="adv-card">
+      <h3>3. Rule Transparency</h3>
+      <p class="muted">Understand what the demo rules mean.</p>
+      <ul>
+        <li>High amount: amount crosses the configured demo threshold.</li>
+        <li>High frequency: many transactions in the selected time window.</li>
+        <li>New recipient: recipient has little or no observed history.</li>
+        <li>Unusual hour: transaction occurs outside the user's typical activity window.</li>
+        <li>Rapid chain: transfers connect accounts within a short time interval.</li>
+      </ul>
+      <span class="pill">Heuristic explanation — not SHAP</span>
+    </div>
+  </div>
+</section>
+<script>
+(() => {
+    const USERS_KEY = "finshieldUsers";
+    const ACTIVE_SESSION_KEY = "finshieldDemoSession";
+    const loginView = document.getElementById("loginView");
+    const dashboard = document.getElementById("dashboardApp");
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+    const authTitle = document.getElementById("authTitle");
+    const toggleAuthMode = document.getElementById("toggleAuthMode");
+    const loginError = document.getElementById("loginError");
+    const registerError = document.getElementById("registerError");
+
+    function normalizeEmail(value) {
+        return String(value || "").trim().toLowerCase();
+    }
+
+    function readUsers() {
+        try {
+            return JSON.parse(localStorage.getItem(USERS_KEY) || "{}");
+        } catch (error) {
+            return {};
+        }
+    }
+
+    function writeUsers(users) {
+        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+
+    function getActiveProfile() {
+        const email = sessionStorage.getItem(ACTIVE_SESSION_KEY);
+        if (!email) return null;
+        const users = readUsers();
+        return users[normalizeEmail(email)] || null;
+    }
+
+    function setSignedIn(signedIn) {
+        loginView.hidden = signedIn;
+        dashboard.hidden = !signedIn;
+        dashboard.classList.remove("dashboard-enter");
+        if (signedIn) {
+            void dashboard.offsetWidth;
+            dashboard.classList.add("dashboard-enter");
+        }
+    }
+
+    function setAuthMode(isRegisterMode) {
+        const signInForm = document.getElementById("loginForm");
+        const createForm = document.getElementById("registerForm");
+        authTitle.textContent = isRegisterMode ? "Create your account" : "Welcome back";
+        toggleAuthMode.textContent = isRegisterMode ? "Sign in instead" : "Create account";
+        signInForm.hidden = isRegisterMode;
+        createForm.hidden = !isRegisterMode;
+        loginError.textContent = "";
+        registerError.textContent = "";
+    }
+
+    function populateAccountSummary() {
+        const profile = getActiveProfile();
+        const accountSummary = document.getElementById("accountSummary");
+        if (!profile) {
+            accountSummary.innerHTML = "No saved account details yet.";
+            return;
+        }
+
+        accountSummary.innerHTML = `
+            <p><strong>${profile.fullName || "User"}</strong></p>
+            <p>${profile.accountType || "Personal"} account</p>
+            <p>${profile.email}</p>
+        `;
+
+        document.getElementById("accountName").value = profile.fullName || "";
+        document.getElementById("accountEmail").value = profile.email || "";
+        document.getElementById("accountPassword").value = profile.password || "";
+        document.getElementById("accountPhone").value = profile.phone || "";
+        document.getElementById("accountType").value = profile.accountType || "Personal";
+        document.getElementById("accountCountry").value = profile.country || "";
+        document.getElementById("accountAddress").value = profile.address || "";
+    }
+
+    function saveCurrentProfileFromForm() {
+        const profile = getActiveProfile();
+        if (!profile) {
+            document.getElementById("accountSaveMessage").textContent = "Please sign in to update your account.";
+            return;
+        }
+
+        const updated = {
+            fullName: document.getElementById("accountName").value.trim(),
+            email: normalizeEmail(document.getElementById("accountEmail").value),
+            password: document.getElementById("accountPassword").value,
+            phone: document.getElementById("accountPhone").value.trim(),
+            accountType: document.getElementById("accountType").value,
+            country: document.getElementById("accountCountry").value.trim(),
+            address: document.getElementById("accountAddress").value.trim()
+        };
+
+        const users = readUsers();
+        if (!updated.email) {
+            document.getElementById("accountSaveMessage").textContent = "Enter a valid email address.";
+            return;
+        }
+
+        users[updated.email] = { ...updated };
+        if (profile.email !== updated.email) {
+            delete users[normalizeEmail(profile.email)];
+        }
+        writeUsers(users);
+        sessionStorage.setItem(ACTIVE_SESSION_KEY, updated.email);
+        populateAccountSummary();
+        document.getElementById("accountSaveMessage").textContent = "Account details saved successfully.";
+    }
+
+    setSignedIn(Boolean(sessionStorage.getItem(ACTIVE_SESSION_KEY)));
+    setAuthMode(false);
+    if (sessionStorage.getItem(ACTIVE_SESSION_KEY)) {
+        populateAccountSummary();
+    }
+
+    loginForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (!loginForm.reportValidity()) {
+            loginError.textContent = "Enter a valid email address and password.";
+            return;
+        }
+
+        const email = normalizeEmail(document.getElementById("loginEmail").value);
+        const password = document.getElementById("loginPassword").value;
+        const users = readUsers();
+        const profile = users[email];
+
+        if (!profile || profile.password !== password) {
+            loginError.textContent = "Incorrect email or password. Please try again or create an account.";
+            return;
+        }
+
+        sessionStorage.setItem(ACTIVE_SESSION_KEY, email);
+        loginError.textContent = "";
+        loginForm.reset();
+        setSignedIn(true);
+        populateAccountSummary();
+    });
+
+    registerForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (!registerForm.reportValidity()) {
+            registerError.textContent = "Please complete all required account details.";
+            return;
+        }
+
+        const profile = {
+            fullName: document.getElementById("registerName").value.trim(),
+            email: normalizeEmail(document.getElementById("registerEmail").value),
+            password: document.getElementById("registerPassword").value,
+            phone: document.getElementById("registerPhone").value.trim(),
+            accountType: document.getElementById("registerAccountType").value,
+            country: document.getElementById("registerCountry").value.trim(),
+            address: document.getElementById("registerAddress").value.trim()
+        };
+
+        if (!profile.email || !profile.password) {
+            registerError.textContent = "A valid email and password are required.";
+            return;
+        }
+
+        const users = readUsers();
+        users[profile.email] = profile;
+        writeUsers(users);
+        sessionStorage.setItem(ACTIVE_SESSION_KEY, profile.email);
+        registerError.textContent = "";
+        registerForm.reset();
+        setSignedIn(true);
+        populateAccountSummary();
+    });
+
+    toggleAuthMode.addEventListener("click", () => {
+        const isRegisterMode = !document.getElementById("registerForm").hidden;
+        setAuthMode(!isRegisterMode);
+    });
+
+    document.getElementById("logoutButton").addEventListener("click", () => {
+        sessionStorage.removeItem(ACTIVE_SESSION_KEY);
+        loginForm.reset();
+        registerForm.reset();
+        setSignedIn(false);
+        setAuthMode(false);
+        document.getElementById("loginEmail").focus();
+    });
+
+    document.getElementById("advSaveReview").addEventListener("click", function () {
+        const status = document.getElementById("advReviewStatus").value;
+        const notes = document.getElementById("advReviewNotes").value;
+        document.getElementById("advReviewSaved").textContent = `Review saved locally: ${status}${notes ? ` — ${notes}` : ""}`;
+    });
+
+    document.getElementById("saveAccountDetails").addEventListener("click", saveCurrentProfileFromForm);
+})();
+</script>
+<style>
+    :root {
+        --bg: #070d19;
+        --panel: #0f1a2b;
+        --panel-light: #14243a;
+        --border: #263a54;
+        --text: #edf4ff;
+        --muted: #9aabc2;
+        --blue: #38bdf8;
+        --green: #34d399;
+        --yellow: #fbbf24;
+        --red: #fb7185;
+    }
+
+    body {
+        background:
+            radial-gradient(ellipse at 50% -18%, #123454 0, transparent 45%),
+            radial-gradient(ellipse at 100% 42%, #0d2431 0, transparent 34%),
+            var(--bg);
+        color: var(--text);
+        font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
+        letter-spacing: .005em;
+    }
+
+    header {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        padding: 15px max(5%, calc((100% - 1320px) / 2));
+        background: #091321eF;
+        border-bottom-color: #263a547a;
+        box-shadow: 0 8px 28px #02081740;
+        backdrop-filter: blur(16px);
+    }
+
+    .brand {
+        color: #8bdcff;
+        font-size: 22px;
+        letter-spacing: -.04em;
+    }
+
+    .status {
+        padding: 7px 12px;
+        border: 1px solid #1c735b;
+        border-radius: 999px;
+        background: #0d302a;
+        color: #8ef0c4;
+        font-size: 12px;
+    }
+
+    main {
+        max-width: 1320px;
+        margin: 32px auto 56px;
+        padding: 0 28px;
+    }
+
+    .intro {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        margin-bottom: 34px;
+        padding: clamp(26px, 5vw, 48px);
+        border: 1px solid #294767;
+        border-radius: 24px;
+        background:
+            radial-gradient(ellipse at 88% 8%, #1b698044, transparent 38%),
+            linear-gradient(120deg, #12243a 0%, #0d1a2c 65%, #102638 100%);
+        box-shadow: 0 24px 70px #02081755, inset 0 1px #ffffff0b;
+    }
+
+    .intro::after {
+        position: absolute;
+        z-index: -1;
+        top: -95px;
+        right: -70px;
+        width: 290px;
+        height: 290px;
+        border: 1px solid #74d7f01b;
+        border-radius: 50%;
+        box-shadow: 0 0 0 28px #74d7f00a, 0 0 0 58px #74d7f007;
+        content: "";
+    }
+
+    .intro h1 {
+        max-width: 760px;
+        margin-bottom: 12px;
+        font-size: clamp(30px, 4.5vw, 46px);
+        line-height: 1.12;
+        letter-spacing: -.045em;
+        background: linear-gradient(100deg, #f3f8ff 20%, #91dfff 90%);
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .intro p {
+        max-width: 690px;
+        color: #b5c7dc;
+        font-size: 15px;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 36px 0 17px;
+        font-size: clamp(19px, 2.5vw, 23px);
+        letter-spacing: -.025em;
+    }
+
+    .section-title::before {
+        width: 4px;
+        height: 24px;
+        border-radius: 5px;
+        background: linear-gradient(180deg, #6ee7f9, #3b82f6);
+        box-shadow: 0 0 16px #38bdf855;
+        content: "";
+    }
+
+    .dashboard { gap: 18px; }
+
+    .card {
+        border-color: #273b55;
+        border-radius: 18px;
+        background: linear-gradient(145deg, #111e31, #0e1929);
+        box-shadow: 0 14px 38px #02081735, inset 0 1px #ffffff08;
+    }
+
+    .card:hover {
+        border-color: #3c6282;
+        box-shadow: 0 18px 42px #02081755, inset 0 1px #ffffff0c;
+        transform: translateY(-3px);
+    }
+
+    .card h2 { letter-spacing: -.02em; }
+
+    input, select {
+        border-color: #314761;
+        border-radius: 10px;
+        background: #091423;
+        transition: border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    input:hover, select:hover { border-color: #52708f; }
+
+    input:focus, select:focus {
+        border-color: #38bdf8;
+        box-shadow: 0 0 0 3px #38bdf820;
+        outline: none;
+    }
+
+    button {
+        border-radius: 10px;
+        transition: filter 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    button:hover {
+        filter: brightness(1.12);
+        box-shadow: 0 8px 22px #02081755;
+        transform: translateY(-1px);
+    }
+
+    .btn-primary {
+        background: linear-gradient(110deg, #087fc9, #2563eb);
+        box-shadow: 0 8px 20px #1677e82b;
+    }
+
+    .btn-normal { background: linear-gradient(110deg, #087f5b, #16a36a); }
+    .btn-suspicious { background: linear-gradient(110deg, #be334d, #e34b5f); }
+    .btn-demo { background: linear-gradient(110deg, #7042d7, #923ee5); }
+    .btn-secondary, .btn-logout { background: #263952; }
+
+    .risk {
+        border: 1px solid #3b5068;
+        background: #17283d;
+    }
+
+    .risk.informational {
+        border-color: #35506f;
+        background: #17283d;
+    }
+
+    .summary-item {
+        border-color: #2a405b;
+        border-radius: 13px;
+        background: linear-gradient(145deg, #12233a, #0c192a);
+    }
+
+    .summary-item .value { color: #d9f4ff; }
+
+    .explain-panel, .graph-card, .case-card, .live-case, .priority-item {
+        border-radius: 14px;
+        background: linear-gradient(145deg, #0c1a2b, #0a1525);
+    }
+
+    #dashboardApp.dashboard-enter .dashboard > .card,
+    #dashboardApp.dashboard-enter .live-monitor-grid > .card {
+    animation: content-enter 520ms cubic-bezier(.2,.75,.25,1) both;
+    }
+
+    #dashboardApp.dashboard-enter .dashboard > .card:nth-child(2),
+    #dashboardApp.dashboard-enter .live-monitor-grid > .card:nth-child(2) {
+    animation-delay: 90ms;
+    }
+
+    .intro::after {
+    animation: hero-orbit 18s ease-in-out infinite alternate;
+    }
+
+    .score-area.result-updated {
+    animation: result-reveal 520ms cubic-bezier(.2,.75,.25,1) both;
+    }
+
+    .explain-panel.result-updated {
+    animation: panel-reveal 520ms ease both;
+    }
+
+    .explain-row {
+    animation: signal-enter 420ms cubic-bezier(.2,.75,.25,1) both;
+    }
+
+    .explain-fill {
+    transform: scaleX(0);
+    transform-origin: left center;
+    animation: signal-fill 650ms cubic-bezier(.2,.75,.25,1) both;
+    }
+
+    @keyframes hero-orbit {
+    from { transform: translate3d(0, 0, 0) rotate(0deg); }
+    to { transform: translate3d(-14px, 12px, 0) rotate(8deg); }
+    }
+
+    @keyframes result-reveal {
+    0% { opacity: .7; transform: translateY(6px) scale(.98); }
+    65% { opacity: 1; transform: translateY(-2px) scale(1.015); }
+    100% { transform: translateY(0) scale(1); }
+    }
+
+    @keyframes panel-reveal {
+    from { border-color: #38bdf866; box-shadow: 0 0 0 0 #38bdf800; }
+    to { border-color: #35506f; box-shadow: 0 0 24px 0 #38bdf80a; }
+    }
+
+    @keyframes signal-enter {
+    from { opacity: 0; transform: translateY(7px); }
+    to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes signal-fill {
+    to { transform: scaleX(1); }
+    }
+
+    .priority-item textarea {
+    width: 100%;
+    margin-top: 10px;
+        padding: 11px 12px;
+        border: 1px solid #314761;
+        border-radius: 10px;
+        background: #091423;
+        color: var(--text);
+        font: inherit;
+        resize: vertical;
+    }
+
+    .table-wrap {
+        border-color: #2b415b;
+        border-radius: 14px;
+        background: #0a1525;
+    }
+
+    th { background: #14253a; }
+    tbody tr:hover { background: #38bdf80d; }
+
+    .login-card {
+        border-color: #2c4562;
+        background: linear-gradient(145deg, #13243a, #0d192a);
+        box-shadow: 0 30px 90px #0008, inset 0 1px #ffffff0b;
+    }
+
+    footer { color: #7f92aa; }
+
+    @media (max-width: 780px) {
+        header { padding: 13px 18px; }
+        .header-actions { gap: 10px; }
+        .status { font-size: 11px; }
+        main { margin-top: 22px; padding: 0 16px; }
+        .intro { border-radius: 18px; }
+        .section-title { margin-top: 29px; }
+        .card { border-radius: 15px; }
+    }
+
+    @media (max-width: 560px) {
+        .transaction-history-controls { grid-template-columns: minmax(0, 1fr); }
+        .transaction-history-table { min-width: 760px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            scroll-behavior: auto !important;
+            animation-delay: 0ms !important;
+            animation-duration: .01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: .01ms !important;
+        }
+    }
+</style>
+</body>
+</html>
